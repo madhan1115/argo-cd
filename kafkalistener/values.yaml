@@ -1,0 +1,33 @@
+global:
+  app: kafkalistener
+  
+deployment:
+  apiVersion: apps/v1
+  kind: Deployment
+
+service:
+  apiVersion: v1
+  kind: Service
+  type: ClusterIP
+
+configmap:
+  apiVersion: v1
+  kind: ConfigMap
+  name: kafkalistener-cm 
+  file: L1/*
+
+metadata:
+  name: kafkalistener-deployment
+  namespace: l1
+
+spec:
+  imageRegistry: gcr.io/synt-int-pks-new-lab/poc/kafkalistener:1.21
+  pullPolicy: Always
+  containerPort: 8081
+  imagePullSecrets: gcr-json-key
+  replicas: 1
+
+volume:
+  name: volumekafkalistener
+  mountPath: /tmp
+  cm_name: kafkalistener-cm

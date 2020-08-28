@@ -1,0 +1,7 @@
+apiVersion: {{.Values.configmap.apiVersion}}
+kind: {{.Values.configmap.kind}}
+metadata:
+  name: {{.Values.configmap.name}}
+  namespace: {{.Values.metadata.namespace}}
+data:
+{{ (.Files.Glob (.Values.configmap.file)).AsConfig | indent 2 }}

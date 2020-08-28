@@ -1,0 +1,44 @@
+apiVersion: {{.Values.deployment.apiVersion}} 
+kind: {{.Values.deployment.kind}} 
+metadata:
+  name: {{.Values.metadata.name}} 
+  labels:
+    app: {{.Values.global.app}}
+  namespace: {{.Values.metadata.namespace}}
+spec:
+  replicas: {{.Values.spec.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.global.app}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.global.app}}
+      annotations:
+       prometheus.io/scrape: 'true'
+       prometheus.io/port: '8081'
+       prometheus.io/path: '/listenerMetrics'
+    spec:
+      containers:
+       - name: {{.Values.global.app}}
+         image: {{.Values.spec.imageRegistry}}
+         ports:
+         - containerPort: {{.Values.spec.containerPort}}
+         imagePullPolicy: {{.Values.spec.pullPolicy}}
+         volumeMounts:
+         - name: {{.Values.volume.name}}
+           mountPath: {{.Values.volume.mountPath}}
+         resources: 
+          limits: 
+            cpu: "1" 
+            memory: "128Mi"
+          requests:
+            cpu: "25m"
+            memory: "64Mi"
+      volumes:
+      - name: {{.Values.volume.name}}
+        configMap:
+         name: {{.Values.volume.cm_name}}
+      imagePullSecrets:
+       - name: {{.Values.spec.imagePullSecrets}}
+
